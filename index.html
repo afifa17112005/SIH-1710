@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Railway Navigation</title>
+</head>
+<body>
+    <h2>Smart Railway Navigation</h2>
+
+    <label>Start:</label>
+    <select id="start">
+        {% for loc in locations %}
+        <option>{{loc}}</option>
+        {% endfor %}
+    </select>
+
+    <label>End:</label>
+    <select id="end">
+        {% for loc in locations %}
+        <option>{{loc}}</option>
+        {% endfor %}
+    </select>
+
+    <button onclick="navigate()">Navigate</button>
+
+    <p id="result"></p>
+
+<script>
+function navigate(){
+    fetch('/navigate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            start: document.getElementById('start').value,
+            end: document.getElementById('end').value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('result').innerText = 
+        "Path: " + data.path.join(" → ");
+
+        // Voice output
+        let msg = new SpeechSynthesisUtterance("Navigate from " + data.path.join(" to "));
+        speechSynthesis.speak(msg);
+    });
+}
+</script>
+
+</body>
+</html>
